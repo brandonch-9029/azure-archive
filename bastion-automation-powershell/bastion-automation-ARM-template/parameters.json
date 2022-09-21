@@ -1,0 +1,21 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "workflows_bastion_auto_create_name": {
+            "value": null
+        },
+        "publicIPAddresses_Bastion_PIP_externalid": {
+            "value": null
+        },
+        "virtualNetworks_vnet_bas_test_externalid": {
+            "value": null
+        },
+        "deployments___encodeURIComponent__BastionOnDemand____externalid": {
+            "value": null
+        },
+        "connections_arm_externalid": {
+            "value": null
+        }
+    }
+}

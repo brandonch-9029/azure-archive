@@ -1,0 +1,191 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "workflows_bastion_auto_create_name": {
+            "defaultValue": "bastion-auto-create",
+            "type": "String"
+        },
+        "publicIPAddresses_Bastion_PIP_externalid": {
+            "defaultValue": "/subscriptions/a972b052-6d4d-4f1b-b454-8e13a0bc3308/resourceGroups/rg-bas-test/providers/Microsoft.Network/publicIPAddresses/Bastion-PIP",
+            "type": "String"
+        },
+        "virtualNetworks_vnet_bas_test_externalid": {
+            "defaultValue": "/subscriptions/a972b052-6d4d-4f1b-b454-8e13a0bc3308/resourceGroups/rg-bas-test/providers/Microsoft.Network/virtualNetworks/vnet-bas-test",
+            "type": "String"
+        },
+        "deployments___encodeURIComponent__BastionOnDemand____externalid": {
+            "defaultValue": "/subscriptions/@{encodeURIComponent('a972b052-6d4d-4f1b-b454-8e13a0bc3308')}/resourceGroups/@{encodeURIComponent('rg-bas-test')}/providers/Microsoft.Resources/deployments/@{encodeURIComponent('BastionOnDemand')}",
+            "type": "String"
+        },
+        "connections_arm_externalid": {
+            "defaultValue": "/subscriptions/a972b052-6d4d-4f1b-b454-8e13a0bc3308/resourceGroups/rg-bas-test/providers/Microsoft.Web/connections/arm",
+            "type": "String"
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "type": "Microsoft.Logic/workflows",
+            "apiVersion": "2017-07-01",
+            "name": "[parameters('workflows_bastion_auto_create_name')]",
+            "location": "southeastasia",
+            "identity": {
+                "type": "SystemAssigned"
+            },
+            "properties": {
+                "state": "Enabled",
+                "definition": {
+                    "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {
+                        "$connections": {
+                            "defaultValue": {},
+                            "type": "Object"
+                        }
+                    },
+                    "triggers": {
+                        "manual": {
+                            "type": "Request",
+                            "kind": "Http",
+                            "inputs": {
+                                "schema": {
+                                    "properties": {
+                                        "Action": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "actions": {
+                        "Switch": {
+                            "runAfter": {},
+                            "cases": {
+                                "Case": {
+                                    "case": "Deploy",
+                                    "actions": {
+                                        "Create_or_update_a_template_deployment": {
+                                            "runAfter": {},
+                                            "type": "ApiConnection",
+                                            "inputs": {
+                                                "body": {
+                                                    "properties": {
+                                                        "mode": "Incremental",
+                                                        "parameters": {
+                                                            "bastionHosts_name": {
+                                                                "value": "bastion-host"
+                                                            },
+                                                            "bastion_location": {
+                                                                "value": "southeastasia"
+                                                            },
+                                                            "publicIPAddresses_externalid": {
+                                                                "value": "[parameters('publicIPAddresses_Bastion_PIP_externalid')]"
+                                                            },
+                                                            "virtualNetworks__externalid": {
+                                                                "value": "[parameters('virtualNetworks_vnet_bas_test_externalid')]"
+                                                            }
+                                                        },
+                                                        "template": {
+                                                            "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                                                            "contentVersion": "1.0.0.0",
+                                                            "parameters": {
+                                                                "bastionHosts_name": {
+                                                                    "type": "String"
+                                                                },
+                                                                "bastion_location": {
+                                                                    "type": "String"
+                                                                },
+                                                                "publicIPAddresses_externalid": {
+                                                                    "type": "String"
+                                                                },
+                                                                "virtualNetworks__externalid": {
+                                                                    "type": "String"
+                                                                }
+                                                            },
+                                                            "resources": [
+                                                                {
+                                                                    "apiVersion": "2020-05-01",
+                                                                    "location": "[[parameters('bastion_location')]",
+                                                                    "name": "[[parameters('bastionHosts_name')]",
+                                                                    "properties": {
+                                                                        "ipConfigurations": [
+                                                                            {
+                                                                                "name": "IpConf",
+                                                                                "properties": {
+                                                                                    "privateIPAllocationMethod": "Dynamic",
+                                                                                    "publicIPAddress": {
+                                                                                        "id": "[[parameters('publicIPAddresses_externalid')]"
+                                                                                    },
+                                                                                    "subnet": {
+                                                                                        "id": "[[concat(parameters('virtualNetworks__externalid'), '/subnets/AzureBastionSubnet')]"
+                                                                                    }
+                                                                                }
+                                                                            }
+                                                                        ]
+                                                                    },
+                                                                    "type": "Microsoft.Network/bastionHosts"
+                                                                }
+                                                            ],
+                                                            "variables": {}
+                                                        }
+                                                    }
+                                                },
+                                                "host": {
+                                                    "connection": {
+                                                        "name": "@parameters('$connections')['arm']['connectionId']"
+                                                    }
+                                                },
+                                                "method": "put",
+                                                "path": "[parameters('deployments___encodeURIComponent__BastionOnDemand____externalid')]",
+                                                "queries": {
+                                                    "wait": false,
+                                                    "x-ms-api-version": "2016-06-01"
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "Case_2": {
+                                    "case": "Delete",
+                                    "actions": {
+                                        "HTTP": {
+                                            "runAfter": {},
+                                            "type": "Http",
+                                            "inputs": {
+                                                "authentication": {
+                                                    "type": "ManagedServiceIdentity"
+                                                },
+                                                "method": "DELETE",
+                                                "uri": "https://management.azure.com/subscriptions/a972b052-6d4d-4f1b-b454-8e13a0bc3308/resourceGroups/rg-bas-test/providers/Microsoft.Network/bastionHosts/bastion-host/?api-version=2020-06-01"
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            "default": {
+                                "actions": {}
+                            },
+                            "expression": "@triggerBody()?['Action']",
+                            "type": "Switch"
+                        }
+                    },
+                    "outputs": {}
+                },
+                "parameters": {
+                    "$connections": {
+                        "value": {
+                            "arm": {
+                                "connectionId": "[parameters('connections_arm_externalid')]",
+                                "connectionName": "arm",
+                                "id": "/subscriptions/a972b052-6d4d-4f1b-b454-8e13a0bc3308/providers/Microsoft.Web/locations/southeastasia/managedApis/arm"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    ]
+}
