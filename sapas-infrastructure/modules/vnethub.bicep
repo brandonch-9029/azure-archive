@@ -172,7 +172,6 @@ resource rthubtransit 'Microsoft.Network/routeTables@2022-01-01' = {
 }
 
 
-
 @description('Generated from /subscriptions/0276fc85-2ee5-498c-910b-b0bc6173cf54/resourceGroups/rg-hub-sea/providers/Microsoft.Network/publicIPAddresses/pip-shared-hub-sea')
 resource pipsharedhubsea 'Microsoft.Network/publicIPAddresses@2022-01-01' = {
   name: 'pip-shared-hub-sea'
@@ -235,21 +234,9 @@ resource vgwsharedhubsea 'Microsoft.Network/virtualNetworkGateways@2022-01-01' =
       ]
       vpnClientRootCertificates: []
       vpnClientRevokedCertificates: []
-      vngClientConnectionConfigurations: []
-      vpnClientConnectionHealth: {
-        vpnClientConnectionsCount: 5
-        allocatedIpAddresses: [
-          '10.224.18.5'
-          '10.224.18.2'
-          '10.224.18.4'
-          '10.224.18.3'
-          '10.224.18.6'
-        ]
-        totalIngressBytesTransferred: 6540896761
-        totalEgressBytesTransferred: 14593702811
-      }
       radiusServers: []
       vpnClientIpsecPolicies: []
+      #disable-next-line no-hardcoded-env-urls
       aadTenant: 'https://login.microsoftonline.com/d1dbb6ae-7ad0-4ac9-92dc-defb3673faaa/'
       aadAudience: '41b23e61-6c1e-4545-b367-cd054e0ed4b4'
       aadIssuer: 'https://sts.windows.net/d1dbb6ae-7ad0-4ac9-92dc-defb3673faaa/'
@@ -258,40 +245,20 @@ resource vgwsharedhubsea 'Microsoft.Network/virtualNetworkGateways@2022-01-01' =
       asn: 65515
       bgpPeeringAddress: '10.224.1.30'
       peerWeight: 0
-      bgpPeeringAddresses: [
-        {
-          ipconfigurationId: '/subscriptions/0276fc85-2ee5-498c-910b-b0bc6173cf54/resourceGroups/rg-hub-sea/providers/Microsoft.Network/virtualNetworkGateways/vgw-shared-hub-sea/ipConfigurations/gwconfig'
-          customBgpIpAddresses: []
-        }
-      ]
     }
     customRoutes: {
       addressPrefixes: []
     }
-    remoteVirtualNetworkPeerings: [
-      {
-        id: '/subscriptions/0276fc85-2ee5-498c-910b-b0bc6173cf54/resourceGroups/rg-sapas-network-sea/providers/Microsoft.Network/virtualNetworks/vnet-sapas-prod-sea/virtualNetworkPeerings/peering-sapas-hub'
-      }
-      {
-        id: '/subscriptions/7c103b37-56da-4ea7-ada0-77d1dbaf6cb3/resourceGroups/HEC53-GDC-southeastasia-1/providers/Microsoft.Network/virtualNetworks/vnet-HEC53-GDC/virtualNetworkPeerings/peering-sap-hub'
-      }
-      {
-        id: '/subscriptions/0276fc85-2ee5-498c-910b-b0bc6173cf54/resourceGroups/rg-sapas-network-sea/providers/Microsoft.Network/virtualNetworks/vnet-sapas-stag-sea/virtualNetworkPeerings/peering-sapasstag-hub'
-      }
-      {
-        id: '/subscriptions/f778f7ee-f512-4c11-bc0e-0ee426e8414c/resourceGroups/HEC55-GDC-southindia-1/providers/Microsoft.Network/virtualNetworks/vnet-HEC55-GDC/virtualNetworkPeerings/vnet-HEC55-GDC-SG-SAPAS-VNET01'
-      }
-    ]
     vpnGatewayGeneration: 'Generation1'
   }
 }
 output hubVNetSubnetArray array = [
-  resourceId('Microsoft.Network/VirtualNetworks/subnets', 'vnet-hub-sea', 'GatewaySubnet')
-  resourceId('Microsoft.Network/VirtualNetworks/subnets', 'vnet-hub-sea', 'temp')
-  resourceId('Microsoft.Network/VirtualNetworks/subnets', 'vnet-hub-sea', 'snet-hub-mgmt')
-  resourceId('Microsoft.Network/VirtualNetworks/subnets', 'vnet-hub-sea', 'snet-hub-firewall-external')
-  resourceId('Microsoft.Network/VirtualNetworks/subnets', 'vnet-hub-sea', 'snet-hub-transit')
-  resourceId('Microsoft.Network/VirtualNetworks/subnets', 'vnet-hub-sea', 'snet-hub-waf-internal')
+  vnethubsea.properties.subnets[0].id
+  vnethubsea.properties.subnets[1].id
+  vnethubsea.properties.subnets[2].id
+  vnethubsea.properties.subnets[3].id
+  vnethubsea.properties.subnets[4].id
+  vnethubsea.properties.subnets[5].id
 ]
 
 output rgHubSeaID string = vnethubsea.id

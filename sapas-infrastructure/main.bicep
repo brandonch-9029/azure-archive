@@ -42,6 +42,16 @@ module vnetapp 'modules/vnetapp.bicep' = {
   }
 }
 
+module testVM 'modules/testvm.bicep' = {
+  name: 'testVM'
+  params: {
+    location: location
+    testVMPassword: testVMPassword
+    testVMUsername: 'azureadmin'
+    subnetArray: vnethub.outputs.hubVNetSubnetArray
+  }
+}
+
 module storageaccount 'modules/storage.bicep' = {
   name: 'consoledqzooisswmaa'
   scope: resourceGroup('rg-hub-sea')

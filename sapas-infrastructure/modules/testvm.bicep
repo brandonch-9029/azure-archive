@@ -1,22 +1,19 @@
-param location string 
-
+param location string
 param testVMUsername string
+
 @secure()
 param testVMPassword string
+param subnetArray array
+/* Subnet Array = [
+  0. GatewaySubnet, 
+  1. temp, 
+  2. snet-hub-mgmt, 
+  3. snet-hub-firewall-external, 
+  4. snet-hub-transit, 
+  5. snet-hub-waf-internal]
+*/
 
-@secure()
-param fwAdminPassword string
-@secure()
-param wafAdminPassword string
-
-module hubnetwork 'hubnetwork.bicep' = {
-  name: 'hub-network'
-  params: {
-    location: location
-  }
-}
-
-@description('Test Virtual Machine')
+@description('vmtest-temp01')
 resource vmtesttemp 'Microsoft.Compute/virtualMachines@2022-03-01' = {
   name: 'vmtest-temp01'
   location: location
@@ -79,7 +76,42 @@ resource vmtesttemp 'Microsoft.Compute/virtualMachines@2022-03-01' = {
   }
 }
 
-@description('VM Test IP')
+
+@description('vmtest-temp01NIC')
+resource vmtesttempNIC 'Microsoft.Network/networkInterfaces@2022-01-01' = {
+  name: 'vmtest-temp01430'
+  properties: {
+    ipConfigurations: [
+      {
+        name: 'ipconfig1'
+        type: 'Microsoft.Network/networkInterfaces/ipConfigurations'
+        properties: {
+          privateIPAddress: '10.224.0.4'
+          privateIPAllocationMethod: 'Dynamic'
+          publicIPAddress: {
+            id: vmtesttempip.id
+          }
+          subnet: {
+            id: subnetArray[1]
+          }
+          primary: true
+          privateIPAddressVersion: 'IPv4'
+        }
+      }
+    ]
+    dnsSettings: {
+      dnsServers: []
+    }
+    enableAcceleratedNetworking: true
+    enableIPForwarding: false
+    nicType: 'Standard'
+  }
+  location: location
+  kind: 'Regular'
+}
+
+
+@description('vmtest-temp01-ip')
 resource vmtesttempip 'Microsoft.Network/publicIPAddresses@2022-01-01' = {
   name: 'vmtest-temp01-ip'
   location: location
@@ -95,92 +127,3 @@ resource vmtesttempip 'Microsoft.Network/publicIPAddresses@2022-01-01' = {
     tier: 'Regional'
   }
 }
-@description('VM Test NIC')
-resource vmtesttempNIC 'Microsoft.Network/networkInterfaces@2022-01-01' = {
-  name: 'vmtest-temp01430'
-  properties: {
-    ipConfigurations: [
-      {
-        name: 'ipconfig1'
-        type: 'Microsoft.Network/networkInterfaces/ipConfigurations'
-        properties: {
-          privateIPAddress: '10.224.0.4'
-          privateIPAllocationMethod: 'Dynamic'
-          publicIPAddress: {
-            id: vmtesttempip.id
-          }
-          subnet: {
-            id: 
-          }
-          primary: true
-          privateIPAddressVersion: 'IPv4'
-        }
-      }
-    ]
-    dnsSettings: {
-      dnsServers: []
-    }
-    enableAcceleratedNetworking: true
-    enableIPForwarding: false
-    nicType: 'Standard'
-  }
-  location: location
-}
-
-@description('Hub Storage Account')
-resource consoledqzooisswmaa 'Microsoft.Storage/storageAccounts@2021-09-01' = {
-  sku: {
-    name: 'Standard_LRS'
-  }
-  kind: 'Storage'
-  name: 'consoledqzoo7isswmaa'
-  location: location
-  tags: {
-  }
-  properties: {
-    minimumTlsVersion: 'TLS1_0'
-    allowBlobPublicAccess: true
-    networkAcls: {
-      bypass: 'AzureServices'
-      virtualNetworkRules: []
-      ipRules: []
-      defaultAction: 'Allow'
-    }
-    supportsHttpsTrafficOnly: true
-    encryption: {
-      services: {
-        file: {
-          keyType: 'Account'
-          enabled: true
-        }
-        blob: {
-          keyType: 'Account'
-          enabled: true
-        }
-      }
-      keySource: 'Microsoft.Storage'
-    }
-  }
-}
-
-@description('Deploy Firewall Module')
-module fw 'firewall.bicep' = {
-  name: 'vmfwhubsea-FGT-A'
-  params: {
-    location: location
-    firewallName: 'vmfwhubsea-FGT-A'
-    fwAdminUsername: 'azureadm'
-    fwAdminPassword: fwAdminPassword
-  }
-}
-@description('Deploy WAF Module')
-module waf 'waf.bicep' = {
-  name: 'vmwafhubsea-FWB-A'
-  params: {
-    location: location
-    wafName: 'vmfwhubsea-FGT-A'
-    wafAdminUsername: 'azureadm'
-    wafAdminPassword: wafAdminPassword
-  }
-}
-
