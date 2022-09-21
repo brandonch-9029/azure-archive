@@ -44,6 +44,7 @@ module vnetapp 'modules/vnetapp.bicep' = {
 
 module testVM 'modules/testvm.bicep' = {
   name: 'testVM'
+  scope: resourceGroup('rg-hub-sea')
   params: {
     location: location
     testVMPassword: testVMPassword

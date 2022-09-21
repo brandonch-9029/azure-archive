@@ -142,7 +142,7 @@ resource pipwafhubsea 'Microsoft.Network/publicIPAddresses@2022-01-01' = {
 }
 
 // Firewall NSG
-@description('NSG Firewall')
+@description('NSG WAF')
 resource vmwafhubseadqzooisswmaaNSG 'Microsoft.Network/networkSecurityGroups@2022-01-01' = {
   name: 'vmwafhubsea-dqzoo7isswmaa-NSG'
   location: location
