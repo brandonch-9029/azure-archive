@@ -1,7 +1,7 @@
 param location string
 
 
-@description('Generated from /subscriptions/0276fc85-2ee5-498c-910b-b0bc6173cf54/resourceGroups/rg-hub-sea/providers/Microsoft.Storage/storageAccounts/consoledqzoo7isswmaa')
+@description('consoledqzooisswmaa')
 resource consoledqzooisswmaa 'Microsoft.Storage/storageAccounts@2022-05-01' = {
   sku: {
     name: 'Standard_LRS'

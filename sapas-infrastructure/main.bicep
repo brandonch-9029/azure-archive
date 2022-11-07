@@ -1,4 +1,5 @@
 param location string = 'southeastasia'
+param subscriptionid string = '0276fc85-2ee5-498c-910b-b0bc6173cf54'
 
 @secure()
 param sqlStagingPassword string
@@ -19,7 +20,7 @@ param wafAdminPassword string
 
 module rg 'modules/rg.bicep' = {
   name: 'resourceGroupDeploy'
-  scope: subscription('0276fc85-2ee5-498c-910b-b0bc6173cf54')
+  scope: subscription(subscriptionid)
   params: {
     location: location
   }
@@ -30,6 +31,7 @@ module vnethub 'modules/vnethub.bicep' = {
   scope: resourceGroup('rg-hub-sea')
   params: {
     location: location
+    subscriptionid: subscriptionid
   }
 }
 

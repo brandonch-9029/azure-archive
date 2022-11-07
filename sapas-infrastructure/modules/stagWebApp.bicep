@@ -129,7 +129,7 @@ resource vmsapaswebappstagSQL 'Microsoft.SqlVirtualMachine/sqlVirtualMachines@20
 }
 
 
-@description('Generated from /subscriptions/0276fc85-2ee5-498c-910b-b0bc6173cf54/resourceGroups/rg-sapas-stag-sea/providers/Microsoft.Network/networkInterfaces/vm-sapas-webapp-s725')
+@description('vm-sapas-webapp-s725 NIC')
 resource vmsapaswebappstagNIC 'Microsoft.Network/networkInterfaces@2022-01-01' = {
   name: 'vm-sapas-webapp-s725'
   properties: {

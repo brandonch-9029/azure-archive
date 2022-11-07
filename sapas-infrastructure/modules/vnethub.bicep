@@ -1,26 +1,28 @@
 param location string
 
+param subscriptionid string
+
 // Array of peering details for vnet-hub-sea
 param vnetHubPeerings object = {
   peer1: {
     name: 'peering-hub-sapas'
     remoteVNet: 'vnet-sapas-prod-sea'
-    resourceID: '/subscriptions/0276fc85-2ee5-498c-910b-b0bc6173cf54/resourceGroups/rg-sapas-network-sea/providers/Microsoft.Network/virtualNetworks/vnet-sapas-prod-sea'
+    resourceID: '/subscriptions/${subscriptionid}/resourceGroups/rg-sapas-network-sea/providers/Microsoft.Network/virtualNetworks/vnet-sapas-prod-sea'
   }
   peer2: {
     name: 'peering-hub-sap'
     remoteVNet: 'vnet-HEC53-GDC'
-    resourceID: '/subscriptions/7c103b37-56da-4ea7-ada0-77d1dbaf6cb3/resourceGroups/HEC53-GDC-southeastasia-1/providers/Microsoft.Network/virtualNetworks/vnet-HEC53-GDC'
+    resourceID: '/subscriptions/${subscriptionid}/resourceGroups/HEC53-GDC-southeastasia-1/providers/Microsoft.Network/virtualNetworks/vnet-HEC53-GDC'
   }
   peer3: {
     name: 'peering-hub-sapas-stag'
     remoteVNet: 'vnet-sapas-stag-sea'
-    resourceID: '/subscriptions/0276fc85-2ee5-498c-910b-b0bc6173cf54/resourceGroups/rg-sapas-network-sea/providers/Microsoft.Network/virtualNetworks/vnet-sapas-stag-sea'
+    resourceID: '/subscriptions/${subscriptionid}/resourceGroups/rg-sapas-network-sea/providers/Microsoft.Network/virtualNetworks/vnet-sapas-stag-sea'
   }
   peer4: {
     name: 'peering-hub-sapdr'
     remoteVNet: 'vnet-HEC55-GDC'
-    resourceID: '/subscriptions/f778f7ee-f512-4c11-bc0e-0ee426e8414c/resourceGroups/HEC55-GDC-southindia-1/providers/Microsoft.Network/virtualNetworks/vnet-HEC55-GDC'
+    resourceID: '/subscriptions/${subscriptionid}/resourceGroups/HEC55-GDC-southindia-1/providers/Microsoft.Network/virtualNetworks/vnet-HEC55-GDC'
   }
 }
 
@@ -172,7 +174,7 @@ resource rthubtransit 'Microsoft.Network/routeTables@2022-01-01' = {
 }
 
 
-@description('Generated from /subscriptions/0276fc85-2ee5-498c-910b-b0bc6173cf54/resourceGroups/rg-hub-sea/providers/Microsoft.Network/publicIPAddresses/pip-shared-hub-sea')
+@description('')
 resource pipsharedhubsea 'Microsoft.Network/publicIPAddresses@2022-01-01' = {
   name: 'pip-shared-hub-sea'
   location: location
@@ -237,9 +239,9 @@ resource vgwsharedhubsea 'Microsoft.Network/virtualNetworkGateways@2022-01-01' =
       radiusServers: []
       vpnClientIpsecPolicies: []
       #disable-next-line no-hardcoded-env-urls
-      aadTenant: 'https://login.microsoftonline.com/d1dbb6ae-7ad0-4ac9-92dc-defb3673faaa/'
-      aadAudience: '41b23e61-6c1e-4545-b367-cd054e0ed4b4'
-      aadIssuer: 'https://sts.windows.net/d1dbb6ae-7ad0-4ac9-92dc-defb3673faaa/'
+      aadTenant: 'hidden'
+      aadAudience: 'hidden'
+      aadIssuer: 'hidden'
     }
     bgpSettings: {
       asn: 65515
